@@ -1,0 +1,18 @@
+[
+  {
+    "ParameterKey": "ServiceName",
+    "ParameterValue": "cf-tutorial"
+  },
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "staging"
+  },
+  {
+    "ParameterKey": "NetworkStackName",
+    "ParameterValue": "cf-tutorial-network-staging"
+  },
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "aws-key"
+  }
+]
