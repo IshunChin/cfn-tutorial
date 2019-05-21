@@ -1,0 +1,189 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: cloudformation tutorial stack
+Parameters:
+  ServiceName:
+    Type: String
+    Description: ServiceName Name
+
+  Environment:
+    Type: String
+
+Resources:
+  #------------------------------------------#
+  #VPC
+  #------------------------------------------#
+  TutorailVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-vpc
+
+
+  #------------------------------------------#
+  #IGW
+  #------------------------------------------#
+  InternetGatewaty:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-igw
+  AttachGatewaty:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGatewaty
+      VpcId: !Ref TutorailVPC
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    DependsOn: AttachGatewaty
+    Properties:
+      VpcId: !Ref TutorailVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-routetable
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGatewaty
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGatewaty
+
+  #------------------------------------------#
+  #Public Subnet
+  #------------------------------------------#
+  PublicSubnet1a:
+    Type: AWS::EC2::Subnet
+    DependsOn: AttachGatewaty
+    Properties:
+      AvailabilityZone: ap-northeast-1a
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref TutorailVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-public-subnet-1a
+
+  PublicSubnetRouteTableAssociation1a:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1a
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnet1c:
+    Type: AWS::EC2::Subnet
+    DependsOn: AttachGatewaty
+    Properties:
+      AvailabilityZone: ap-northeast-1a
+      CidrBlock: 10.0.2.0/24
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref TutorailVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-public-subnet-1c
+
+  PublicSubnetRouteTableAssociation1c:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1c
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnet1d:
+    Type: AWS::EC2::Subnet
+    DependsOn: AttachGatewaty
+    Properties:
+      AvailabilityZone: ap-northeast-1a
+      CidrBlock: 10.0.3.0/24
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref TutorailVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-public-subnet-1d
+
+  PublicSubnetRouteTableAssociation1d:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1d
+      RouteTableId: !Ref PublicRouteTable
+
+  #------------------------------------------#
+  #Private Subnet
+  #------------------------------------------#
+  PrivateSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: ap-northeast-1a
+      CidrBlock: 10.0.11.0/24
+      VpcId: !Ref TutorailVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-private-subnet-1a
+
+  PrivateSubnet1c:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: ap-northeast-1c
+      CidrBlock: 10.0.12.0/24
+      VpcId: !Ref TutorailVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-private-subnet-1c
+
+  PrivateSubnet1d:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: ap-northeast-1d
+      CidrBlock: 10.0.13.0/24
+      VpcId: !Ref TutorailVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-private-subnet-1d
+
+Outputs:
+  exportVPCId:
+    Description: VPC ID
+    Value: !Ref TutorailVPC
+    Export:
+      Name: !Sub ${AWS::StackName}-VPCID
+
+  exportPublicSubnet1a:
+    Description: The subnet ID to use for public on ap-northeast-1a
+    Value: !Ref PublicSubnet1a
+    Export:
+      Name: !Sub ${AWS::StackName}-public-subnet-1a
+
+  exportPublicSubnet1c:
+    Description: The subnet ID to use for public on ap-northeast-1c
+    Value: !Ref PublicSubnet1c
+    Export:
+      Name: !Sub ${AWS::StackName}-public-subnet-1c
+
+  exportPublicSubnet1d:
+    Description: The subnet ID to use for public on ap-northeast-1d
+    Value: !Ref PublicSubnet1d
+    Export:
+      Name: !Sub ${AWS::StackName}-public-subnet-1d
+
+  exportPrivateSubnet1a:
+    Description: The subnet ID to use for private on ap-northeast-1a
+    Value: !Ref PrivateSubnet1a
+    Export:
+      Name: !Sub ${AWS::StackName}-private-subnet-1a
+
+  exportPrivateSubnet1c:
+    Description: The subnet ID to use for private on ap-northeast-1c
+    Value: !Ref PrivateSubnet1c
+    Export:
+      Name: !Sub ${AWS::StackName}-private-subnet-1c
+
+  exportPrivateSubnet1d:
+    Description: The subnet ID to use for private on ap-northeast-1d
+    Value: !Ref PrivateSubnet1d
+    Export:
+      Name: !Sub ${AWS::StackName}-private-subnet-1d
