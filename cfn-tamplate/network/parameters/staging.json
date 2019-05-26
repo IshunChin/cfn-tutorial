@@ -1,7 +1,7 @@
 [
   {
     "ParameterKey": "ServiceName",
-    "ParameterValue": "cf-tutorial"
+    "ParameterValue": "cfn-tutorial"
   },
   {
     "ParameterKey": "Environment",

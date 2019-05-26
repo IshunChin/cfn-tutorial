@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: cf tutorial stack
+Parameters:
+  ServiceName:
+    Type: String
+    Description: Service Name
+
+  Environment:
+    Type: String
+
+  MasterUsername:
+    Type: AWS::SSM::Parameter::Value<String>
+
+  MasterUserPassword:
+    Type: AWS::SSM::Parameter::Value<String>
+
+
+Resources:
+#------------------------------------------#
+#RDS
+#------------------------------------------#
+
+  RDSSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: rds subnet group
+      DBSubnetGroupName: !Sub ${ServiceName}-${Environment}-db
+      SubnetIds:
+        - Fn::ImportValue: !Sub ${ServiceName}-${Environment}-private-subnet-1a
+        - Fn::ImportValue: !Sub ${ServiceName}-${Environment}-private-subnet-1c
+
+  RDSDBParameterGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Properties:
+      Description: web db parameter group
+      Family: mysql5.7
+      Parameters:
+        time_zone: Asia/Tokyo
+
+  #------------------------------------------#
+  #RDS Instance
+  #------------------------------------------#
+  RdsInstance:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Delete
+    Properties:
+      DBInstanceIdentifier: !Sub ${ServiceName}-${Environment}-db
+      AvailabilityZone: ap-northeast-1a
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 5
+      StorageType: gp2
+      VPCSecurityGroups:
+        - Fn::ImportValue:
+            !Sub ${ServiceName}-${Environment}-db-security-group
+      Engine: MySQL
+      EngineVersion: 5.7.23
+      DBSubnetGroupName: !Ref RDSSubnetGroup
+      DBParameterGroupName: !Ref RDSDBParameterGroup
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Ref MasterUserPassword
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-db
+
+
+Outputs:
+  RDSEndpoint:
+    Description: rds endpoint
+    Value: !GetAtt RdsInstance.Endpoint.Address
+    Export:
+      Name: !Sub ${ServiceName}-${Environment}-rds-endpoint

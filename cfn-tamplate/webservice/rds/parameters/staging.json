@@ -1,0 +1,18 @@
+[
+  {
+    "ParameterKey": "ServiceName",
+    "ParameterValue": "cfn-tutorial"
+  },
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "staging"
+  },
+  {
+    "ParameterKey": "MasterUserPassword",
+    "ParameterValue": "MasterUserPassword"
+  },
+  {
+    "ParameterKey": "MasterUsername",
+    "ParameterValue": "MasterUsername"
+  }
+]

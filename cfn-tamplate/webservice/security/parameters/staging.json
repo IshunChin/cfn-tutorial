@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey": "ServiceName",
+    "ParameterValue": "cfn-tutorial"
+  },
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "staging"
+  },
+  {
+    "ParameterKey": "MyIp",
+    "ParameterValue": "MyIp"
+  }
+]

@@ -8,9 +8,6 @@ Parameters:
   Environment:
     Type: String
 
-  NetworkStackName:
-    Type: String
-
   KeyName:
     Type: String
     Description: EC2 access key name
@@ -26,7 +23,7 @@ Resources:
       GroupDescription: public web server security group
       VpcId:
         Fn::ImportValue:
-          !Sub ${NetworkStackName}-VPCID
+          !Sub ${ServiceName}-${Environment}-vpcid
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
@@ -117,10 +114,3 @@ Resources:
       ResourceSignal:
         Timeout: PT5M
 
-Outputs:
-  OutputWebserviceEndpoint:
-    Value: !Join
-      - ''
-      - 'http://'
-        - !GetAtt
-          - WebServerInstance.PublicDnsName

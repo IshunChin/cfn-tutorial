@@ -1,0 +1,10 @@
+[
+  {
+    "ParameterKey": "ServiceName",
+    "ParameterValue": "cfn-tutorial"
+  },
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "production"
+  }
+]

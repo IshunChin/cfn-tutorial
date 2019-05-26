@@ -1,15 +1,11 @@
 [
   {
     "ParameterKey": "ServiceName",
-    "ParameterValue": "cf-tutorial"
+    "ParameterValue": "cfn-tutorial"
   },
   {
     "ParameterKey": "Environment",
     "ParameterValue": "staging"
-  },
-  {
-    "ParameterKey": "NetworkStackName",
-    "ParameterValue": "cf-tutorial-network-staging"
   },
   {
     "ParameterKey": "KeyName",

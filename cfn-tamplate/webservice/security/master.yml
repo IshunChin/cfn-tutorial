@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: cf tutorial stack
+Parameters:
+  ServiceName:
+    Type: String
+    Description: Service Name
+
+  Environment:
+    Type: String
+
+  MyIp:
+    Type: AWS::SSM::Parameter::Value<String>
+
+Resources:
+  #------------------------------------------#
+  #SecurityGroup
+  #------------------------------------------#
+  WebSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${ServiceName}-${Environment}-public-web-sg
+      GroupDescription: public web server security group
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${ServiceName}-${Environment}-vpcid
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref MyIp
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-web-sg
+
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${ServiceName}-${Environment}-public-web-db
+      GroupDescription: public web server security group
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${ServiceName}-${Environment}-vpcid
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3305
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref WebSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-db-sg
+
+Outputs:
+  exportWebSecurityGroup:
+    Description: general web server security group
+    Value: !Ref WebSecurityGroup
+    Export:
+      Name: !Sub ${ServiceName}-${Environment}-web-security-group
+
+  exportDBSecurityGroup:
+    Description: general web server security group
+    Value: !Ref DBSecurityGroup
+    Export:
+      Name: !Sub ${ServiceName}-${Environment}-db-security-group
