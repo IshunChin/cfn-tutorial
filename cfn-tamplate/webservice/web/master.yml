@@ -42,7 +42,7 @@ Resources:
               yum install -y mariadb mariadb-devel gcc git
               yum install -y python3 python3-devel
               git clone https://github.com/IshunChin/cfn-tutorial.git /root/cfn-tutorial
-              pip3 install -r /root/cfn-tutorial/sayhello/requirements.txt
+              pip3 install -r /root/cfn-tutorial/requirements.txt
               pip3 install mysqlclient
               echo FLASK_APP=sayhello >> /root/cfn-tutorial/.flaskenv
             - 'echo export DATABASE_URI='
