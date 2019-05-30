@@ -8,7 +8,11 @@
     "ParameterValue": "/cfn-tutorial/stg/env"
   },
   {
-    "ParameterKey": "MyIp",
-    "ParameterValue": "MyIp"
+    "ParameterKey": "MasterUserPassword",
+    "ParameterValue": "/cfn-tutorial/comm/db/password"
+  },
+  {
+    "ParameterKey": "MasterUsername",
+    "ParameterValue": "/cfn-tutorial/comm/db/username"
   }
 ]

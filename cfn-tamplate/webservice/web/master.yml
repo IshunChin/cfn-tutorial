@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: cf tutorial stack
+Parameters:
+  ServiceName:
+    Type: AWS::SSM::Parameter::Value<String>
+
+  Environment:
+    Type: AWS::SSM::Parameter::Value<String>
+
+  KeyName:
+    Type: String
+    Description: EC2 access key name
+
+  MasterUsername:
+    Type: AWS::SSM::Parameter::Value<String>
+
+  MasterUserPassword:
+    Type: AWS::SSM::Parameter::Value<String>
+
+Resources:
+
+#------------------------------------------#
+#AutoScaling::LaunchConfiguration
+#------------------------------------------#
+  PublicWebServerLaunchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      AssociatePublicIpAddress: true
+      ImageId: ami-0f9ae750e8274075b
+      InstanceType: t3.nano
+      KeyName: !Sub ${KeyName}
+      LaunchConfigurationName: !Sub ${ServiceName}-${Environment}-public-web-service
+      SecurityGroups:
+        - Fn::ImportValue:
+            !Sub ${ServiceName}-${Environment}-ec2-security-group
+      UserData: !Base64
+        Fn::Join:
+          - ''
+          - - |+
+              #!/bin/sh -ex
+              yum update -y
+              yum install -y mariadb mariadb-devel gcc git
+              yum install -y python3 python3-devel
+              git clone https://github.com/IshunChin/cfn-tutorial.git /root/cfn-tutorial
+              pip3 install -r /root/cfn-tutorial/sayhello/requirements.txt
+              pip3 install mysqlclient
+              echo FLASK_APP=sayhello >> /root/cfn-tutorial/.flaskenv
+            - 'echo export DATABASE_URI='
+            - "'mysql://"
+            - !Ref MasterUsername
+            - ':'
+            - !Ref MasterUserPassword
+            - '@'
+            - Fn::ImportValue:
+                !Sub ${ServiceName}-${Environment}-rds-endpoint
+            - "/db' >> /etc/profile"
+            - |+
+
+            - |
+              cd /root/cfn-tutorial/; flask initdb
+              flask run --host=0.0.0.0 --port=80 &
+      - Key: サービス名
+        Value: !Sub ${ServiceName}
+      - Key: 環境
+        Value: !Sub ${Environment}
+#------------------------------------------#
+#AutoScaling
+#------------------------------------------#
+  PublicWebServerAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: PublicWebService
+      VPCZoneIdentifier:
+        - Fn::ImportValue:
+            !Sub ${ServiceName}-${Environment}-public-subnet-1a
+        - Fn::ImportValue:
+            !Sub ${ServiceName}-${Environment}-public-subnet-1c
+      HealthCheckType: EC2
+      LaunchConfigurationName: !Ref PublicWebServerLaunchConfiguration
+      DesiredCapacity: 2
+      MaxSize: 2
+      MinSize: 1
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-public-web-service
+          PropagateAtLaunch: true
+        - Key: サービス名
+          Value: !Sub ${ServiceName}
+          PropagateAtLaunch: true
+        - Key: 環境
+          Value: !Sub ${Environment}
+          PropagateAtLaunch: true

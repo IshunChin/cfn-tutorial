@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey": "ServiceName",
+    "ParameterValue": "/cfn-tutorial/comm/servicename"
+  },
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "/cfn-tutorial/prod/env"
+  },
+  {
+    "ParameterKey": "MasterUserPassword",
+    "ParameterValue": "/cfn-tutorial/comm/db/password"
+  },
+  {
+    "ParameterKey": "MasterUsername",
+    "ParameterValue": "/cfn-tutorial/comm/db/username"
+  },
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "aws-key"
+  }
+]

@@ -2,11 +2,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: cfn tutorial dynamodb stack
 Parameters:
   ServiceName:
-    Type: String
-    Description: Service Name
+    Type: AWS::SSM::Parameter::Value<String>
 
   Environment:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
 
 Resources:
   DynamodbTutorialTable:

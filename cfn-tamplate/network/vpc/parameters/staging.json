@@ -1,10 +1,10 @@
 [
   {
     "ParameterKey": "ServiceName",
-    "ParameterValue": "cfn-tutorial"
+    "ParameterValue": "/cfn-tutorial/comm/servicename"
   },
   {
     "ParameterKey": "Environment",
-    "ParameterValue": "staging"
+    "ParameterValue": "/cfn-tutorial/stg/env"
   }
 ]

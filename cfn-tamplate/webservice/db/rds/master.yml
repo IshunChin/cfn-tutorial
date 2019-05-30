@@ -2,11 +2,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: cf tutorial stack
 Parameters:
   ServiceName:
-    Type: String
-    Description: Service Name
+    Type: AWS::SSM::Parameter::Value<String>
 
   Environment:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
 
   MasterUsername:
     Type: AWS::SSM::Parameter::Value<String>
@@ -58,10 +57,14 @@ Resources:
       DBParameterGroupName: !Ref RDSDBParameterGroup
       MasterUsername: !Ref MasterUsername
       MasterUserPassword: !Ref MasterUserPassword
+      DBName: db
       Tags:
         - Key: Name
           Value: !Sub ${ServiceName}-${Environment}-db
-
+        - Key: サービス名
+          Value: !Sub ${ServiceName}
+        - Key: 環境
+          Value: !Sub ${Environment}
 
 Outputs:
   RDSEndpoint:

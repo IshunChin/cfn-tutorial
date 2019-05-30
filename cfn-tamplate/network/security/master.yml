@@ -2,11 +2,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: cf tutorial stack
 Parameters:
   ServiceName:
-    Type: String
-    Description: Service Name
+    Type: AWS::SSM::Parameter::Value<String>
 
   Environment:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
 
   MyIp:
     Type: AWS::SSM::Parameter::Value<String>
@@ -15,15 +14,61 @@ Resources:
   #------------------------------------------#
   #SecurityGroup
   #------------------------------------------#
-  WebSecurityGroup:
+  ElbSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub ${ServiceName}-${Environment}-public-web-sg
+      GroupName: !Sub ${ServiceName}-${Environment}-sg-for-public-elb
       GroupDescription: public web server security group
       VpcId:
         Fn::ImportValue:
           !Sub ${ServiceName}-${Environment}-vpcid
       SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-sg-for-public-elb
+        - Key: サービス名
+          Value: !Sub ${ServiceName}
+        - Key: 環境
+          Value: !Sub ${Environment}
+
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${ServiceName}-${Environment}-sg-for-private-db
+      GroupDescription: public web server security group
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${ServiceName}-${Environment}-vpcid
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3305
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref Ec2SecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub ${ServiceName}-${Environment}-sg-for-private-db
+        - Key: サービス名
+          Value: !Sub ${ServiceName}
+        - Key: 環境
+          Value: !Sub ${Environment}
+
+  Ec2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${ServiceName}-${Environment}-sg-for-private-ec2
+      GroupDescription: public web server security group
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${ServiceName}-${Environment}-vpcid
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref ElbSecurityGroup
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
@@ -34,34 +79,28 @@ Resources:
           CidrIp: !Ref MyIp
       Tags:
         - Key: Name
-          Value: !Sub ${ServiceName}-${Environment}-web-sg
-
-  DBSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: !Sub ${ServiceName}-${Environment}-public-web-db
-      GroupDescription: public web server security group
-      VpcId:
-        Fn::ImportValue:
-          !Sub ${ServiceName}-${Environment}-vpcid
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 3306
-          ToPort: 3306
-          SourceSecurityGroupId: !Ref WebSecurityGroup
-      Tags:
-        - Key: Name
-          Value: !Sub ${ServiceName}-${Environment}-db-sg
+          Value: !Sub ${ServiceName}-${Environment}-sg-for-private-ec2
+        - Key: サービス名
+          Value: !Sub ${ServiceName}
+        - Key: 環境
+          Value: !Sub ${Environment}
 
 Outputs:
-  exportWebSecurityGroup:
+  exportEc2SecurityGroup:
     Description: general web server security group
-    Value: !Ref WebSecurityGroup
+    Value: !Ref Ec2SecurityGroup
     Export:
-      Name: !Sub ${ServiceName}-${Environment}-web-security-group
+      Name: !Sub ${ServiceName}-${Environment}-ec2-security-group
 
   exportDBSecurityGroup:
     Description: general web server security group
     Value: !Ref DBSecurityGroup
     Export:
       Name: !Sub ${ServiceName}-${Environment}-db-security-group
+
+  exportElbSecurityGroup:
+    Description: general web server security group
+    Value: !Ref ElbSecurityGroup
+    Export:
+      Name: !Sub ${ServiceName}-${Environment}-elb-security-group
+

@@ -2,11 +2,10 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: cloudformation tutorial stack
 Parameters:
   ServiceName:
-    Type: String
-    Description: ServiceName Name
+    Type: AWS::SSM::Parameter::Value<String>
 
   Environment:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
 
 Resources:
   #------------------------------------------#
@@ -21,6 +20,10 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${ServiceName}-${Environment}-vpc
+        - Key: サービス名
+          Value: !Sub ${ServiceName}
+        - Key: 環境
+          Value: !Sub ${Environment}
 
   #------------------------------------------#
   #IGW
@@ -31,6 +34,11 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${ServiceName}-${Environment}-igw
+        - Key: サービス名
+          Value: !Sub ${ServiceName}
+        - Key: 環境
+          Value: !Sub ${Environment}
+
   AttachGatewaty:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
@@ -45,6 +53,10 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${ServiceName}-${Environment}-routetable
+        - Key: サービス名
+          Value: !Sub ${ServiceName}
+        - Key: 環境
+          Value: !Sub ${Environment}
 
   PublicRoute:
     Type: AWS::EC2::Route
@@ -68,6 +80,10 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${ServiceName}-${Environment}-public-subnet-1a
+        - Key: サービス名
+          Value: !Sub ${ServiceName}
+        - Key: 環境
+          Value: !Sub ${Environment}
 
   PublicSubnetRouteTableAssociation1a:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -79,13 +95,17 @@ Resources:
     Type: AWS::EC2::Subnet
     DependsOn: AttachGatewaty
     Properties:
-      AvailabilityZone: ap-northeast-1a
+      AvailabilityZone: ap-northeast-1c
       CidrBlock: 10.0.2.0/24
       MapPublicIpOnLaunch: true
       VpcId: !Ref TutorailVPC
       Tags:
         - Key: Name
           Value: !Sub ${ServiceName}-${Environment}-public-subnet-1c
+        - Key: サービス名
+          Value: !Sub ${ServiceName}
+        - Key: 環境
+          Value: !Sub ${Environment}
 
   PublicSubnetRouteTableAssociation1c:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -105,6 +125,10 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${ServiceName}-${Environment}-private-subnet-1a
+        - Key: サービス名
+          Value: !Sub ${ServiceName}
+        - Key: 環境
+          Value: !Sub ${Environment}
 
   PrivateSubnet1c:
     Type: AWS::EC2::Subnet
@@ -115,6 +139,10 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${ServiceName}-${Environment}-private-subnet-1c
+        - Key: サービス名
+          Value: !Sub ${ServiceName}
+        - Key: 環境
+          Value: !Sub ${Environment}
 
 Outputs:
   VPCId:
