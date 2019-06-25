@@ -74,7 +74,7 @@ Resources:
             !Sub ${ServiceName}-${Environment}-public-subnet-1c
       HealthCheckType: EC2
       LaunchConfigurationName: !Ref PublicWebServerLaunchConfiguration
-      DesiredCapacity: 1
+      DesiredCapacity: 2
       MaxSize: 2
       MinSize: 1
       Tags:
