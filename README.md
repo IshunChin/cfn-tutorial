@@ -49,7 +49,7 @@ aws cloudformation create-change-set \
 
 ### excute change set
 ```bash
-git checkout 1474718 cfn-tamplate/webservice/web/master.yml
+git checkout 8059e26 cfn-tamplate/webservice/web/master.yml
 
 aws cloudformation create-change-set \
 --stack-name cfn-tutorial-staging-webservice \
@@ -61,5 +61,5 @@ aws cloudformation create-change-set \
 
 ### Git diff
 ```bash
-git difftool 1474718 b28966d cfn-tamplate/webservice/web/master.yml
+git difftool 8059e26 b28966d cfn-tamplate/webservice/web/master.yml
 ```
