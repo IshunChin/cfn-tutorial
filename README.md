@@ -38,7 +38,7 @@ aws cloudformation create-stack \
 
 ### create change set
 ```bash
-git checkout add-loadbalancer cfn-tamplate/webservice/web/master.yml
+git checkout 8059e26 cfn-tamplate/webservice/web/master.yml
 
 aws cloudformation create-change-set \
 --stack-name cfn-tutorial-staging-webservice \
