@@ -112,7 +112,7 @@ Resources:
           Value: !Sub ${ServiceName}-${Environment}-targetgroup
         - Key: サービス名
           Value: !Sub ${ServiceName}
-       - Key: 環境
+        - Key: 環境
           Value: !Sub ${Environment}
 
 #------------------------------------------#
@@ -138,7 +138,7 @@ Resources:
 #ALB-listener:
 #------------------------------------------#
   AlbListenner:
-   Type: AWS::ElasticLoadBalancingV2::Listener
+    Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
         - Type: forward
@@ -152,4 +152,4 @@ Outputs:
       Fn::Join:
         - ''
         - - http://
-         - !GetAtt ApplicationLoadBalancer.DNSName
+          - !GetAtt ApplicationLoadBalancer.DNSName
